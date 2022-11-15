@@ -13,6 +13,8 @@ import Signin from "../signin/Signin";
 import GoogleAuth from "../googleauth/googleauth";
 import FacebookAuth from "../facebookauth/facebookauth"
 import GithubAuth from "../githubauth/githubauth";
+import TwitterAuth from "../twitterauth/twitterauth";
+
 
 const Routing = ({theme}) => {
 
@@ -27,6 +29,7 @@ const Routing = ({theme}) => {
           <Route path="/google" element={<GoogleAuth />}/>
           <Route path="/facebook" element={<FacebookAuth />}/>
           <Route path="/github" element={<GithubAuth />}/>
+          <Route path="/twitter" element={<TwitterAuth />}/>
         </Routes>
         </>
     )
