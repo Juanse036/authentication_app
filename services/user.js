@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const axios = require('axios');
 
-const { OAuth2Client } = require("google-auth-library");
-const { google } = require('googleapis');
+const querystring = require('node:querystring');
 
 async function ValidateUniqueEmail(email){
 
@@ -75,8 +74,8 @@ async function Login({email, password, authoutside = false}){
     }
 }
 
-
-async function getAccessTokenFromCode(googleToken) {
+//-----------------GOOGLE LOGIN / SIGN IN ---------------------------
+async function getAccessTokenFromCodeGoogle(googleToken) {
 
     const { data } = await axios({
         url: `https://oauth2.googleapis.com/token`,
@@ -84,7 +83,7 @@ async function getAccessTokenFromCode(googleToken) {
         data: {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: 'http://127.0.0.1:5173/google',
+        redirect_uri: 'https://127.0.0.1:5173/google',
         grant_type: 'authorization_code',
         code:googleToken,
         },
@@ -93,7 +92,7 @@ async function getAccessTokenFromCode(googleToken) {
       return data.access_token;
 }
 
-async function getDataFromToken(access_token){
+async function getDataFromTokenGoogle(access_token){
 
     const { data } = await axios({
         url: 'https://www.googleapis.com/oauth2/v2/userinfo',
@@ -106,11 +105,10 @@ async function getDataFromToken(access_token){
       return data;
 }
 
-
 async function googleLogin({googleToken}){    
 
-    const access_token = await getAccessTokenFromCode(googleToken)
-    const googleData = await getDataFromToken(access_token)
+    const access_token = await getAccessTokenFromCodeGoogle(googleToken)
+    const googleData = await getDataFromTokenGoogle(access_token)
 
     if (!(await ValidateUniqueEmail(googleData.email))){        
         const { data, error } = await supabase
@@ -128,6 +126,135 @@ async function googleLogin({googleToken}){
     const LoginData = await Login({email: googleData.email, password: '', authoutside: true})
 
     return LoginData;      
+
+}
+
+//-----------------FACEBOOK LOGIN / SIGN IN ---------------------------
+
+async function getAccessTokenFromCodeFacebook(facebookToken) {
+
+    const { data } = await axios({
+        url: 'https://graph.facebook.com/v4.0/oauth/access_token',
+        method: 'get',
+        params: {
+          client_id: process.env.FACEBOOK_APP_ID,
+          client_secret: process.env.FACEBOOK_APP_SECRET,
+          redirect_uri: 'https://127.0.0.1:5173/facebook',
+          code:facebookToken,
+        },
+      });
+      console.log(data); // { access_token, token_type, expires_in }
+      return data.access_token;
+}
+
+async function getDataFromTokenFacebook(accesstoken){
+
+    const { data } = await axios({
+        url: 'https://graph.facebook.com/me',
+        method: 'get',
+        params: {
+          fields: ['id', 'email', 'name', 'picture'].join(','),
+          access_token: accesstoken,
+        },
+      });
+      console.log(data); // { id, email, first_name, last_name }
+      return data;
+}
+
+async function facebookLogin({facebookToken}){    
+
+    const accesstoken = await getAccessTokenFromCodeFacebook(facebookToken)
+    const facebookData = await getDataFromTokenFacebook(accesstoken)
+    
+
+    if (!(await ValidateUniqueEmail(facebookData.email))){        
+        const { data, error } = await supabase
+        .from('users_auth_app')
+        .insert([
+          { email: facebookData.email, 
+            name: facebookData.name,
+            photo: facebookData.picture.data.url,
+            authoutside: true,
+            authmethod: 'facebook'
+          },
+        ])        
+    }
+
+    const LoginData = await Login({email: facebookData.email, password: '', authoutside: true})
+
+    return LoginData;   
+    
+    
+
+}
+
+
+//-----------------GITHUB LOGIN / SIGN IN ---------------------------
+
+async function getAccessTokenFromCodeGithub(githubToken) {
+
+    
+
+    const { data } = await axios({
+        url: 'https://github.com/login/oauth/access_token',
+        method: 'get',
+        params: {
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+          redirect_uri: 'https://127.0.0.1:5173/github',
+          code:githubToken,
+        },
+      });
+      /**
+       * GitHub returns data as a string we must parse.
+       */
+
+       
+      const parsedData = querystring.parse(data);
+      //console.log(parsedData); // { token_type, access_token, error, error_description }
+      if (parsedData.error) throw new Error(parsedData.error_description)
+      return parsedData.access_token;
+}
+
+async function getDataFromTokenGithub(accesstoken){
+
+    const { data } = await axios({
+        url: 'https://api.github.com/user',
+        method: 'get',
+        headers: {
+          Authorization: `token ${accesstoken}`,
+        },
+      });
+      //console.log({data}); // { id, email, name, login, avatar_url }
+      return data;
+}
+
+async function githubLogin({githubToken}){        
+
+    const accesstoken = await getAccessTokenFromCodeGithub(githubToken)
+    const githubData = await getDataFromTokenGithub(accesstoken)   
+
+    const user = githubData.email ? githubData.email : githubData.login    
+
+    if (!(await ValidateUniqueEmail(user))){        
+        const { data, error } = await supabase
+        .from('users_auth_app')
+        .insert([
+          { email: user, 
+            name: githubData.name,
+            photo: githubData.avatar_url,
+            bio: githubData.bio,
+            authoutside: true,
+            authmethod: 'github'
+          },
+        ])        
+    }
+
+    const LoginData = await Login({email: user, password: '', authoutside: true})
+
+    return LoginData;   
+    
+    
 
 }
 
@@ -287,7 +414,9 @@ async function UpdateUserInformation(user, body, photo){
 module.exports = {
     Login,
     googleLogin,
+    facebookLogin,
+    githubLogin,
     SignIn,
     GetUserInformation,
-    UpdateUserInformation
+    UpdateUserInformation,
   }

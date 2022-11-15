@@ -6,9 +6,6 @@ const auth = require("../../middleware/auth")
 const multer  = require('multer');
 var upload = multer()
 
-const fs = require('fs')
-const path = require('path')
-
 
 router.post('/sign-in', async function(req, res, next) {
     
@@ -58,6 +55,50 @@ router.post('/login/google', async function(req, res, next) {
     try {                  
         
         const {data, error, token} = await user.googleLogin(req.body)
+        
+        if(error){
+            return res.status(401).send({
+                message: data
+            })
+        }
+        
+        res.header('auth-token', token).json({
+            error:null,
+            data: {token}
+        })
+        
+    } catch (error) {
+        res.send(error);        
+    }
+});
+
+router.post('/login/facebook', async function(req, res, next) {
+    
+    try {                  
+        
+        const {data, error, token} = await user.facebookLogin(req.body)
+        
+        if(error){
+            return res.status(401).send({
+                message: data
+            })
+        }
+        
+        res.header('auth-token', token).json({
+            error:null,
+            data: {token}
+        })
+        
+    } catch (error) {
+        res.send(error);        
+    }
+});
+
+router.post('/login/github', async function(req, res, next) {   
+    
+    try {                  
+        
+        const {data, error, token} = await user.githubLogin(req.body)
         
         if(error){
             return res.status(401).send({

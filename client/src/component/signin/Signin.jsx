@@ -13,8 +13,8 @@ import password from '../../img/password.png'
 
 import AuthService from '../../actions/user'
 import googleLoginUrl from '../../actions/googleauth';
-
-import GoogleLogin from "react-google-login";
+import facebookLoginUrl from '../../actions/facebookauth';
+import githubLoginUrl from '../../actions/githubauth';
 
 
 
@@ -83,6 +83,14 @@ const Signin = ({theme}) => {
         window.location.href = googleLoginUrl;    
     }
 
+    const handleFacebookAuth = () => {
+        window.location.href = facebookLoginUrl;    
+    }
+
+    const handleGithubAuth = () => {
+        window.location.href = githubLoginUrl;    
+    }
+
     return(
         <div className={`w-[474px] h-[634px] border  border-[#BDBDBD] rounded-3xl bg-light dark:bg-dark`}>
             <div className=" mt-[48px] ml-[57px] mr-[] ">                
@@ -122,9 +130,9 @@ const Signin = ({theme}) => {
                     <p className="text-sm text-secondary leading-[19.07px] tracking-[-0.035]">or continue with these social profile.</p>
                     <div className="mt-[22.5px] flex justify-center gap-x-5">
                         <button onClick={handleGoogleAuth}><img src={gmail} alt="gmail" /></button>
-                        <button><img src={facebook} alt="facebook" /></button>
+                        <button onClick={handleFacebookAuth}><img src={facebook} alt="facebook" /></button>
                         <button><img src={twitter} alt="twiiter" /></button>
-                        <button><img src={github} alt="githu" /></button>
+                        <button onClick={handleGithubAuth}><img src={github} alt="github" /></button>
                     </div>
                     <p className="mt-[27px] text-sm text-secondary leading-[19.07px] tracking-[-0.035]">Already a member? <button onClick={handleClickLogin} className='text-[#2D9CDB]'>#Login</button></p>
                 </div>

@@ -43,6 +43,46 @@ class AuthService {
       }
     }
 
+    async facebooklogin(facebookToken) {
+
+      try {
+        const { data, error } = await axios.post('/api/user/login/facebook', { facebookToken })
+        const { data:token } = await data       
+
+        if(error){
+          return {error: true, msg:"Something went wrong"}
+        }
+        localStorage.setItem("user", JSON.stringify(token.token));
+        window.dispatchEvent(new Event("storage"));
+
+        return {error: false, msg:"Login Succesfully"}
+        
+      } catch (error) {
+        console.log(error)
+        return {error: true, msg:error.response}
+      }
+    }
+
+    async githublogin(githubToken) {           
+
+      try {
+        const { data, error } = await axios.post('/api/user/login/github', { githubToken })
+        const { data:token } = await data       
+
+        if(error){
+          return {error: true, msg:"Something went wrong"}
+        }
+        localStorage.setItem("user", JSON.stringify(token.token));
+        window.dispatchEvent(new Event("storage"));
+
+        return {error: false, msg:"Login Succesfully"}
+        
+      } catch (error) {
+        console.log(error)
+        return {error: true, msg:error.response}
+      }
+    }
+
 
     async register(email, password) {
 

@@ -43,6 +43,12 @@ const Navbar = () => {
         if(location.pathname === "/google"){
             return 
         }
+        if(location.pathname === "/facebook"){
+            return 
+        }
+        if(location.pathname === "/github"){
+            return 
+        }
 
         if(!(await AuthService.getCurrentUser())){
             setIsAuth(false)
@@ -50,6 +56,7 @@ const Navbar = () => {
         }else{
             await getUserInformation()
             setIsAuth(true)
+            navigate('/profile')
         }
     } 
 

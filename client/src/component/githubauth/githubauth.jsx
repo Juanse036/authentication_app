@@ -8,7 +8,7 @@ import AuthService from '../../actions/user'
 import Spinner from "../spinner/Spinner";
 
 
-const GoogleAuth = () => {
+const GithubAuth = () => {
 
     const navigate = useNavigate();
 
@@ -19,8 +19,9 @@ const GoogleAuth = () => {
             console.log(`An error occurred: ${urlParams.error}`);
         } else {  
             console.log(urlParams);
-            const {error, msg} = await AuthService.googlelogin(urlParams.code)    
-            if (error) {                           
+            const {error, msg} = await AuthService.githublogin(urlParams.code)
+            if (error) {              
+                console.log("notiflix", error)             
                 Notify.failure(msg);
                 navigate('/')
             }else{
@@ -41,4 +42,4 @@ const GoogleAuth = () => {
 }
 
 
-export default GoogleAuth
+export default GithubAuth

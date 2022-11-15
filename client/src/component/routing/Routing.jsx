@@ -11,6 +11,8 @@ import Edit from "../edit/Edit"
 import Profile from "../profile/Profile"
 import Signin from "../signin/Signin";
 import GoogleAuth from "../googleauth/googleauth";
+import FacebookAuth from "../facebookauth/facebookauth"
+import GithubAuth from "../githubauth/githubauth";
 
 const Routing = ({theme}) => {
 
@@ -23,6 +25,8 @@ const Routing = ({theme}) => {
           <Route path="/edit" element={<Edit theme={theme}/>}/>
           <Route path="/profile" element={<Profile theme={theme}/>}/>
           <Route path="/google" element={<GoogleAuth />}/>
+          <Route path="/facebook" element={<FacebookAuth />}/>
+          <Route path="/github" element={<GithubAuth />}/>
         </Routes>
         </>
     )

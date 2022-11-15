@@ -1,10 +1,8 @@
 import * as queryString from 'query-string';
 
-
-
 const stringifiedParams = queryString.stringify({
     client_id: "481743457362-fdk3ja1ofeptfbeivlsur0uub31pmu6m.apps.googleusercontent.com",
-    redirect_uri: 'http://127.0.0.1:5173/google',
+    redirect_uri: 'https://127.0.0.1:5173/google',
     scope: [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -12,6 +10,7 @@ const stringifiedParams = queryString.stringify({
     response_type: 'code',
     access_type: 'offline',
     prompt: 'consent',
+    auth: 'google'
   });
   
 const googleLoginUrl = `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`;

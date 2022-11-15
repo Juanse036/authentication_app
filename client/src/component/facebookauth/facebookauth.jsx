@@ -8,7 +8,7 @@ import AuthService from '../../actions/user'
 import Spinner from "../spinner/Spinner";
 
 
-const GoogleAuth = () => {
+const FacebookAuth = () => {
 
     const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const GoogleAuth = () => {
             console.log(`An error occurred: ${urlParams.error}`);
         } else {  
             console.log(urlParams);
-            const {error, msg} = await AuthService.googlelogin(urlParams.code)    
+            const {error, msg} = await AuthService.facebooklogin(urlParams.code)    
             if (error) {                           
                 Notify.failure(msg);
                 navigate('/')
@@ -41,4 +41,4 @@ const GoogleAuth = () => {
 }
 
 
-export default GoogleAuth
+export default FacebookAuth
