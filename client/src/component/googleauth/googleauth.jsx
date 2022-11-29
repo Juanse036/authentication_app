@@ -18,7 +18,7 @@ const GoogleAuth = () => {
         if (urlParams.error) {
             console.log(`An error occurred: ${urlParams.error}`);
         } else {  
-            console.log(urlParams);
+            //console.log(urlParams);
             const {error, msg} = await AuthService.googlelogin(urlParams.code)    
             if (error) {                           
                 Notify.failure(msg);
@@ -30,8 +30,7 @@ const GoogleAuth = () => {
         }
     }
 
-    useEffect(() => {
-        console.log('useEffect')
+    useEffect(() => {        
         getCodeUrl()
     }, [])
 

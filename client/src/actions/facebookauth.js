@@ -1,8 +1,13 @@
 import * as queryString from 'query-string';
 
+const FacebookClientId = import.meta.env.VITE_FACEBOOK_CLIENT_ID
+const FacebookRedirectURL = import.meta.env.VITE_FACEBOOK_REDIRECT_URL
+
+
+
 const stringifiedParams = queryString.stringify({
-  client_id: '498045525593544',
-  redirect_uri: 'https://127.0.0.1:5173/facebook',
+  client_id: FacebookClientId,
+  redirect_uri: FacebookRedirectURL,
   scope: ['email', 'user_friends'].join(','), // comma seperated string
   response_type: 'code',
   auth_type: 'rerequest',

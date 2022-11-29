@@ -1,8 +1,13 @@
 import * as queryString from 'query-string';
 
+const GoogleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+const GoogleRedirectURL = import.meta.env.VITE_GOOGLE_REDIRECT_URL
+
+
+
 const stringifiedParams = queryString.stringify({
-    client_id: "481743457362-fdk3ja1ofeptfbeivlsur0uub31pmu6m.apps.googleusercontent.com",
-    redirect_uri: 'https://127.0.0.1:5173/google',
+    client_id: GoogleClientId,
+    redirect_uri: GoogleRedirectURL,
     scope: [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',

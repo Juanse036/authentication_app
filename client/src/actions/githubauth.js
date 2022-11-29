@@ -1,8 +1,11 @@
 import * as queryString from 'query-string';
 
+const GithubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID
+const GithubRedirectURL = import.meta.env.VITE_GITHUB_REDIRECT_URL
+
 const params = queryString.stringify({
-  client_id: '369d770933e78a2e26f0',
-  redirect_uri: 'https://127.0.0.1:5173/github',
+  client_id: GithubClientId,
+  redirect_uri: GithubRedirectURL,
   scope: [
     'read:user', 
     'user:email'

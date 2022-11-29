@@ -20,8 +20,7 @@ const GithubAuth = () => {
         } else {  
             console.log(urlParams);
             const {error, msg} = await AuthService.githublogin(urlParams.code)
-            if (error) {              
-                console.log("notiflix", error)             
+            if (error) {                              
                 Notify.failure(msg);
                 navigate('/')
             }else{

@@ -1,18 +1,22 @@
 import * as queryString from 'query-string';
 
+const TwitterClientId = import.meta.env.VITE_TWITTER_CLIENT_ID
+const TwitterRedirectURL = import.meta.env.VITE_TWITTER_REDIRECT_URL
+
+
 const stringifiedParams = queryString.stringify({
-    client_id: "WHo0WUNiRzhialI2ZjdMc3dzYTY6MTpjaQ",
-    redirect_uri: 'https://127.0.0.1:5173/twitter',
+    client_id: TwitterClientId,
+    redirect_uri: TwitterRedirectURL,
     scope: [
         "users.read", 
         "tweet.read", 
-        "follows.read", 
-        "follows.write"
+        'offline.access'
     ].join(' '), // space seperated string
-    response_type: 'code',
-    access_type: 'offline',
-    prompt: 'consent',
-    auth: 'twitter'
+    state:'state',
+    code_challenge: 'challenge',
+    code_challenge_method:'plain',
+    response_type: 'code',    
+    prompt: 'consent',    
   });
   
 const twitterLoginUrl = `https://twitter.com/i/oauth2/authorize?${stringifiedParams}`;

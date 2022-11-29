@@ -3,10 +3,15 @@ import axios from "axios";
 
 class AuthService {
 
+        
+        //const TwitterUrlRequest = import.meta.env.VITE_TWITTER_REQUEST
+        
     async login(email, password) {      
       try {  
+
+        const LoginUrlRequest = import.meta.env.VITE_LOGIN_REQUEST
         
-        const { data, error } = await axios.post('/api/user/login', { email, password })
+        const { data, error } = await axios.post(LoginUrlRequest, { email, password })
         const { data:token } = data       
 
         if(error){
@@ -26,8 +31,12 @@ class AuthService {
     async googlelogin(googleToken) {
 
       try {
-        const { data, error } = await axios.post('/api/user/login/google', { googleToken })
-        const { data:token } = await data       
+
+        const GoogleUrlRequest = import.meta.env.VITE_GOOGLE_REQUEST
+
+        const { data, error } = await axios.post(GoogleUrlRequest, { googleToken })        
+        console.log(data)     
+        const { data:token } = await data  
 
         if(error){
           return {error: true, msg:"Something went wrong"}
@@ -36,17 +45,25 @@ class AuthService {
         window.dispatchEvent(new Event("storage"));
 
         return {error: false, msg:"Login Succesfully"}
+
         
-      } catch (error) {
+        
+      } catch (error) {        
+
         console.log(error)
-        return {error: true, msg:error.response}
+        //return {error: true, msg:error.response}
       }
+      
     }
 
     async facebooklogin(facebookToken) {
 
       try {
-        const { data, error } = await axios.post('/api/user/login/facebook', { facebookToken })
+
+
+        const FacebookUrlRequest = import.meta.env.VITE_FACEBOOK_REQUEST        
+
+        const { data, error } = await axios.post(FacebookUrlRequest, { facebookToken })
         const { data:token } = await data       
 
         if(error){
@@ -66,7 +83,11 @@ class AuthService {
     async githublogin(githubToken) {           
 
       try {
-        const { data, error } = await axios.post('/api/user/login/github', { githubToken })
+
+        const GithubUrlRequest = import.meta.env.VITE_GITHUB_REQUEST
+        console.log({GithubUrlRequest})
+        const { data, error } = await axios.post(GithubUrlRequest, { githubToken })
+        console.log({data, error})
         const { data:token } = await data       
 
         if(error){
@@ -77,6 +98,7 @@ class AuthService {
 
         return {error: false, msg:"Login Succesfully"}
         
+        
       } catch (error) {
         console.log(error)
         return {error: true, msg:error.response}
@@ -84,10 +106,44 @@ class AuthService {
     }
 
 
+    async twitterlogin(twitterToken) {   
+      
+      console.log({twitterToken})
+      
+      /*
+
+      try {
+
+        const TwitterUrlRequest = import.meta.env.VITE_TWITTER_REQUEST
+        console.log({TwitterUrlRequest})
+        const { data, error } = await axios.post(TwitterUrlRequest, { twitterToken })
+        console.log({data, error})
+        const { data:token } = await data       
+
+        if(error){
+          return {error: true, msg:"Something went wrong"}
+        }
+        localStorage.setItem("user", JSON.stringify(token.token));
+        window.dispatchEvent(new Event("storage"));
+
+        return {error: false, msg:"Login Succesfully"}
+        
+        
+      } catch (error) {
+        console.log(error)
+        return {error: true, msg:error.response}
+      }
+      */
+    }
+
+
     async register(email, password) {
 
       try {
-        const { data, error} = await axios.post('/api/user/sign-in', { email, password })
+
+        const RegisterUrlRequest = import.meta.env.VITE_REGISTER_REQUEST
+
+        const { data, error} = await axios.post(RegisterUrlRequest, { email, password })
 
         if(error){
           return {error: true, msg:"Something went wrong"}
@@ -116,8 +172,10 @@ class AuthService {
     async getUserInformation(token) { 
 
       try {  
+
+        const GetUserInformationUrlRequest = import.meta.env.VITE_GETUSERINFORMATION_REQUEST
           
-        const {data, error} = await axios.post('/api/user/getuser', {}, {
+        const {data, error} = await axios.post(GetUserInformationUrlRequest, {}, {
           headers: {
           'auth-token' : token
           }
@@ -139,8 +197,11 @@ class AuthService {
     async updateUserInformation(CurrentToken, userInformation){
 
             
-      try {                
-        const {data, error} = await axios.post('api/user/updateuser', userInformation, {
+      try {        
+        
+        const UpdateUserInformationUrlRequest = import.meta.env.VITE_UPDATEUSERINFORMATION_REQUEST
+
+        const {data, error} = await axios.post(UpdateUserInformationUrlRequest, userInformation, {
           headers: {
             'auth-token' : CurrentToken
             }

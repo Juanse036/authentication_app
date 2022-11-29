@@ -74,25 +74,36 @@ async function Login({email, password, authoutside = false}){
     }
 }
 
-//-----------------GOOGLE LOGIN / SIGN IN ---------------------------
+//-----------------GOOGLE LOGIN / SIGN IN --------------------------
 async function getAccessTokenFromCodeGoogle(googleToken) {
+    
+    try {
+        const Redirect_URL = process.env.GOOGLE_REDIRECT_URL || 'https://127.0.0.1:5173/google';
+        console.log({Redirect_URL})
 
-    const { data } = await axios({
-        url: `https://oauth2.googleapis.com/token`,
-        method: 'post',
-        data: {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: 'https://127.0.0.1:5173/google',
-        grant_type: 'authorization_code',
-        code:googleToken,
-        },
-    });
-    //console.log(data);// { access_token, expires_in, token_type, refresh_token }
-      return data.access_token;
+        const { data } = await axios({
+            url: `https://oauth2.googleapis.com/token`,
+            method: 'post',
+            data: {
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: Redirect_URL,
+            grant_type: 'authorization_code',
+            code:googleToken,
+            },
+        });        
+        return data.access_token;
+        
+    } catch (error) {
+
+        return error
+    }    
+
+      
 }
 
 async function getDataFromTokenGoogle(access_token){
+    
 
     const { data } = await axios({
         url: 'https://www.googleapis.com/oauth2/v2/userinfo',
@@ -100,13 +111,14 @@ async function getDataFromTokenGoogle(access_token){
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
-      });
+      });    
 
       return data;
 }
 
 async function googleLogin({googleToken}){    
 
+    console.log({googleToken})
     const access_token = await getAccessTokenFromCodeGoogle(googleToken)
     const googleData = await getDataFromTokenGoogle(access_token)
 
@@ -122,10 +134,13 @@ async function googleLogin({googleToken}){
           },
         ])        
     }
+    
 
-    const LoginData = await Login({email: googleData.email, password: '', authoutside: true})
+    const LoginData = await Login({email: googleData.email, password: '', authoutside: true})   
 
-    return LoginData;      
+    return LoginData;
+    
+    
 
 }
 
@@ -133,13 +148,15 @@ async function googleLogin({googleToken}){
 
 async function getAccessTokenFromCodeFacebook(facebookToken) {
 
+    const Redirect_URL = process.env.FACEBOOK_REDIRECT_URL || 'https://127.0.0.1:5173/facebook';
+
     const { data } = await axios({
         url: 'https://graph.facebook.com/v4.0/oauth/access_token',
         method: 'get',
         params: {
           client_id: process.env.FACEBOOK_APP_ID,
           client_secret: process.env.FACEBOOK_APP_SECRET,
-          redirect_uri: 'https://127.0.0.1:5173/facebook',
+          redirect_uri: Redirect_URL,
           code:facebookToken,
         },
       });
@@ -194,6 +211,7 @@ async function facebookLogin({facebookToken}){
 async function getAccessTokenFromCodeGithub(githubToken) {
 
     
+    const Redirect_URL = process.env.GITHUB_REDIRECT_URL || 'https://127.0.0.1:5173/github';
 
     const { data } = await axios({
         url: 'https://github.com/login/oauth/access_token',
@@ -201,7 +219,7 @@ async function getAccessTokenFromCodeGithub(githubToken) {
         params: {
           client_id: process.env.GITHUB_CLIENT_ID,
           client_secret: process.env.GITHUB_CLIENT_SECRET,
-          redirect_uri: 'https://127.0.0.1:5173/github',
+          redirect_uri: Redirect_URL,
           code:githubToken,
         },
       });
@@ -225,7 +243,7 @@ async function getDataFromTokenGithub(accesstoken){
           Authorization: `token ${accesstoken}`,
         },
       });
-      //console.log({data}); // { id, email, name, login, avatar_url }
+      
       return data;
 }
 
@@ -258,6 +276,8 @@ async function githubLogin({githubToken}){
 
 }
 
+
+//-----------------------------------------------------------------------------------------------------
 
 async function SignIn({email, password}){    
 
